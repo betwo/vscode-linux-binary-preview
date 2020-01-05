@@ -1,0 +1,98 @@
+{
+  "name": "vscode-linux-binary-preview",
+  "displayName": "Linux Binary Preview",
+  "publisher": "betwo",
+  "license": "MIT",
+  "description": "Display information about Linux binaries such as shared objects and archive files",
+  "version": "1.0.0",
+  "icon": "assets/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/betwo/vscode-linux-binary-preview"
+  },
+  "engines": {
+    "vscode": "^1.30.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "multi-root ready"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./dist/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "linux-binary-preview.openCurrentFile",
+        "title": "Open an URI with the binary preview",
+        "category": "Linux Binary Preview"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "Linux Binary Preview Settings",
+        "properties": {
+          "vscode-linux-binary-preview.file_command": {
+            "type": "string",
+            "default": "file",
+            "description": "Path to the file executable"
+          },
+          "vscode-linux-binary-preview.ldd_command": {
+            "type": "string",
+            "default": "ldd",
+            "description": "Path to the ldd executable"
+          },
+          "vscode-linux-binary-preview.nm_command": {
+            "type": "string",
+            "default": "nm",
+            "description": "Path to the nm executable"
+          }
+        }
+      }
+    ],
+    "languages": [
+      {
+        "id": "shared_object",
+        "extensions": [
+          ".so"
+        ],
+        "configuration": "./lang/shared-object-language-configuration.json"
+      },
+      {
+        "id": "archive",
+        "extensions": [
+          ".a"
+        ],
+        "configuration": "./lang/archive-language-configuration.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^8.10.25",
+    "serialize-javascript": ">=2.1.1",
+    "ts-loader": "^6.1.0",
+    "typescript": "^3.3.3333",
+    "vscode": "^1.1.34",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.8"
+  },
+  "dependencies": {
+    "fast-glob": "^2.2.7",
+    "child_process": "^1.0.2"
+  },
+  "extensionDependencies": []
+}
