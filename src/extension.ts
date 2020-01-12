@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 
 import { SharedObjectContentProvider } from './content_provider_so';
 
@@ -16,6 +17,13 @@ export async function openTextDocument(document: vscode.TextDocument, context: v
   }
   if (document.languageId === 'shared_object' || document.languageId === 'archive') {
     openBinaryFilePreview(document.uri, context);
+  } else {
+    try {
+      fs.accessSync(document.uri.fsPath, fs.constants.X_OK);
+      openBinaryFilePreview(document.uri, context);
+    } catch (err) {
+      // binary is not executable, do nothing
+    }
   }
 }
 

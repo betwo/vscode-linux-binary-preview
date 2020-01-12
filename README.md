@@ -10,6 +10,7 @@ Open binary Linux files and display information about the symbols contained.
 Supported file types are:
  * Shared objects (.so)
  * Archives (.a)
+ * Executable binary files
 
 Displayed information is the output of the commands
  * `file` (File information)
