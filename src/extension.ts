@@ -18,11 +18,17 @@ export async function openTextDocument(document: vscode.TextDocument, context: v
   if (document.languageId === 'shared_object' || document.languageId === 'archive') {
     openBinaryFilePreview(document.uri, context);
   } else {
-    try {
-      fs.accessSync(document.uri.fsPath, fs.constants.X_OK);
-      openBinaryFilePreview(document.uri, context);
-    } catch (err) {
-      // binary is not executable, do nothing
+    let mime_type = await so_provider.getMimeType(document.uri);
+    switch (mime_type) {
+      case "application/x-sharedlib":
+      case "application/x-archive":
+        try {
+          fs.accessSync(document.uri.fsPath, fs.constants.X_OK);
+          openBinaryFilePreview(document.uri, context);
+        } catch (err) {
+          // binary is not executable, do nothing
+        }
+        break;
     }
   }
 }

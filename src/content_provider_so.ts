@@ -46,10 +46,23 @@ export class SharedObjectContentProvider {
         </html>`;
     }
 
+    public async getMimeType(uri: vscode.Uri): Promise<string | undefined> {
+        let config = vscode.workspace.getConfiguration('vscode-linux-binary-preview');
+        let file_executable = config['file_command'];
+        let args = ['-L', '-b', '--mime-type', uri.fsPath.toString()];
+
+        console.log(`${file_executable} ${args.join(' ')}`);
+        let output = await this.getCommandOutput(`${file_executable} ${args.join(' ')}`)
+        console.log(output);
+
+        return output[0];
+    }
+
+
     private async getFileOutput(uri: vscode.Uri): Promise<string | undefined> {
         let config = vscode.workspace.getConfiguration('vscode-linux-binary-preview');
         let file_executable = config['file_command'];
-        let args = [uri.fsPath.toString()];
+        let args = [uri.fsPath.toString(), '-L'];
 
         let file = await this.getCommandOutput(`${file_executable} ${args.join(' ')}`);
         return `<h2>${file}</h2>`;
