@@ -11,3 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2020-01-13
 ### Added:
  * Add support for executable files not ending in `.so` or `.a`
+## [2.0.0] - 2021-06-17
+### Changed:
+ * Replaced custom webview with newer `CustomEditor` API
