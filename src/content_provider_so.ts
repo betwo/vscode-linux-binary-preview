@@ -1,7 +1,56 @@
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
+import { BinaryFile } from './binary_file';
 
-export class SharedObjectContentProvider {
+export class SharedObjectContentProvider implements vscode.CustomEditorProvider<BinaryFile>  {
+
+    private static readonly viewType = 'linuxBinaryPreview.preview';
+    private static readonly viewTypeForecd = 'linuxBinaryPreview.forcePreview';
+
+    public static register(context: vscode.ExtensionContext): vscode.Disposable[] {
+        const provider = new SharedObjectContentProvider(context);
+        const providerRegistrations = [
+            vscode.window.registerCustomEditorProvider(SharedObjectContentProvider.viewType, provider),
+            vscode.window.registerCustomEditorProvider(SharedObjectContentProvider.viewTypeForecd, provider)
+        ];
+        return providerRegistrations;
+    }
+
+    constructor(
+        private readonly context: vscode.ExtensionContext
+    ) { }
+
+    public onDidChangeCustomDocument: vscode.Event<vscode.CustomDocumentEditEvent<BinaryFile>> | vscode.Event<vscode.CustomDocumentContentChangeEvent<BinaryFile>>;
+
+    public async saveCustomDocument(document: any, cancellation: any): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+    public async saveCustomDocumentAs(document: any, destination: any, cancellation: any): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+    public async revertCustomDocument(document: any, cancellation: any): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+    public async backupCustomDocument(document: any, context: any, cancellation: any): Promise<vscode.CustomDocumentBackup> {
+        throw new Error('Method not implemented.');
+    }
+
+    public async openCustomDocument(uri: any, openContext: any, token: any) {
+        return await BinaryFile.create(uri, openContext);
+    }
+
+    public async resolveCustomEditor(
+        document: any,
+        webviewPanel: vscode.WebviewPanel,
+        _token: vscode.CancellationToken
+    ): Promise<void> {
+        // Setup initial content for the webview
+        webviewPanel.webview.options = {
+            enableScripts: true,
+        };
+        webviewPanel.webview.html = await this.toHTML(document.uri);
+    }
+
     public async toHTML(uri: vscode.Uri): Promise<string | undefined> {
         let content = "";
         content += "<h1>" + uri.toString() + "</h1>";
