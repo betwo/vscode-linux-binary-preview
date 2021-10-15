@@ -101,7 +101,7 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
         let args = ['-L', '-b', '--mime-type', uri.fsPath.toString()];
 
         console.log(`${file_executable} ${args.join(' ')}`);
-        let output = await this.getCommandOutput(`${file_executable} ${args.join(' ')}`)
+        let output = await this.getCommandOutput(file_executable, args)
         console.log(output);
 
         return output[0];
@@ -113,7 +113,7 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
         let file_executable = config['file_command'];
         let args = [uri.fsPath.toString(), '-L'];
 
-        let file = await this.getCommandOutput(`${file_executable} ${args.join(' ')}`);
+        let file = await this.getCommandOutput(file_executable, args);
         return `<h2>${file}</h2>`;
     }
 
@@ -126,7 +126,7 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
         let ldd_executable = config['ldd_command'];
         let args = [uri.fsPath.toString()];
 
-        let ldd = await this.getCommandOutput(`${ldd_executable} ${args.join(' ')}`);
+        let ldd = await this.getCommandOutput(ldd_executable, args);
 
         for (let row of ldd) {
             let [symbol, library] = row.split(/\s*=>\s*/);
@@ -157,7 +157,7 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
 
         let nm: string[];
         try {
-            nm = await this.getCommandOutput(`${nm_executable} --demangle ${args.join(' ')}`);
+            nm = await this.getCommandOutput(nm_executable, ["--demangle"].concat(args));
         } catch(exception) {
             console.error(exception);
             return "";
@@ -269,7 +269,7 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
         return content;
     }
 
-    private async getCommandOutput(command: string): Promise<string[] | undefined> {
+    private async getCommandOutput(command: string, args: string[]): Promise<string[] | undefined> {
         let options: child_process.ExecOptionsWithStringEncoding = {
             encoding: 'utf8',
             maxBuffer: 1024 * 1024 * 1024
@@ -277,7 +277,7 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
 
         return new Promise(
             (resolve, reject) => {
-                let child = child_process.exec(command, options,
+                let child = child_process.execFile(command, args, options,
                     (err, std_out, std_err) => {
                         if (err) {
                             console.log(`error: ${err}\n${std_err}`);
