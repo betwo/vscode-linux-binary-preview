@@ -2,16 +2,17 @@ import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import { BinaryFile } from './binary_file';
 
-export class SharedObjectContentProvider implements vscode.CustomEditorProvider<BinaryFile>  {
+export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorProvider<BinaryFile>  {
 
     private static readonly viewType = 'linuxBinaryPreview.preview';
     private static readonly viewTypeForecd = 'linuxBinaryPreview.forcePreview';
 
     public static register(context: vscode.ExtensionContext): vscode.Disposable[] {
         const provider = new SharedObjectContentProvider(context);
+        const options = { webviewOptions: { enableFindWidget: true } };
         const providerRegistrations = [
-            vscode.window.registerCustomEditorProvider(SharedObjectContentProvider.viewType, provider),
-            vscode.window.registerCustomEditorProvider(SharedObjectContentProvider.viewTypeForecd, provider)
+            vscode.window.registerCustomEditorProvider(SharedObjectContentProvider.viewType, provider, options),
+            vscode.window.registerCustomEditorProvider(SharedObjectContentProvider.viewTypeForecd, provider, options)
         ];
         return providerRegistrations;
     }
@@ -22,20 +23,7 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
 
     public onDidChangeCustomDocument: vscode.Event<vscode.CustomDocumentEditEvent<BinaryFile>> | vscode.Event<vscode.CustomDocumentContentChangeEvent<BinaryFile>>;
 
-    public async saveCustomDocument(document: any, cancellation: any): Promise<void> {
-        throw new Error('Method not implemented.');
-    }
-    public async saveCustomDocumentAs(document: any, destination: any, cancellation: any): Promise<void> {
-        throw new Error('Method not implemented.');
-    }
-    public async revertCustomDocument(document: any, cancellation: any): Promise<void> {
-        throw new Error('Method not implemented.');
-    }
-    public async backupCustomDocument(document: any, context: any, cancellation: any): Promise<vscode.CustomDocumentBackup> {
-        throw new Error('Method not implemented.');
-    }
-
-    public async openCustomDocument(uri: any, openContext: any, token: any) {
+    public async openCustomDocument(uri: any, openContext: any, token: any): Promise<BinaryFile> {
         return await BinaryFile.create(uri, openContext);
     }
 
@@ -107,7 +95,6 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
         return output[0];
     }
 
-
     private async getFileOutput(uri: vscode.Uri): Promise<string | undefined> {
         let config = vscode.workspace.getConfiguration('vscode-linux-binary-preview');
         let file_executable = config['file_command'];
@@ -158,7 +145,7 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
         let nm: string[];
         try {
             nm = await this.getCommandOutput(nm_executable, ["--demangle"].concat(args));
-        } catch(exception) {
+        } catch (exception) {
             console.error(exception);
             return "";
         }
