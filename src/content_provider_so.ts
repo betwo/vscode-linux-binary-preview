@@ -155,7 +155,13 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
         let nm_executable = config['nm_command'];
         let args = [uri.fsPath.toString()];
 
-        let nm = await this.getCommandOutput(`${nm_executable} --demangle ${args.join(' ')}`);
+        let nm: string[];
+        try {
+            nm = await this.getCommandOutput(`${nm_executable} --demangle ${args.join(' ')}`);
+        } catch(exception) {
+            console.error(exception);
+            return "";
+        }
 
         let content = "<h2>nm:</h2>";
         content += "<table>";
@@ -275,7 +281,6 @@ export class SharedObjectContentProvider implements vscode.CustomEditorProvider<
                     (err, std_out, std_err) => {
                         if (err) {
                             console.log(`error: ${err}\n${std_err}`);
-                            vscode.window.showErrorMessage(err.message);
                             reject();
                             return;
                         }
