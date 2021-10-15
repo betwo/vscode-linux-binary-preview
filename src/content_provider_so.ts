@@ -41,7 +41,7 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
 
     public async toHTML(uri: vscode.Uri): Promise<string | undefined> {
         let content = "";
-        content += "<h1>" + uri.toString() + "</h1>";
+        content += "<h1>" + uri.fsPath.toString() + "</h1>";
         content += "<p></p>";
 
         content += await this.getFileOutput(uri);
