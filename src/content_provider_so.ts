@@ -36,6 +36,20 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
         webviewPanel.webview.options = {
             enableScripts: true,
         };
+
+        webviewPanel.webview.onDidReceiveMessage(
+            message => {
+                switch (message.command) {
+                    case 'showBinary':
+                        vscode.commands.executeCommand('vscode.openWith', vscode.Uri.parse(message.text), SharedObjectContentProvider.viewType);
+                        return;
+                    default:
+                        console.log(`Unsupported message: ${message}`);
+                        return;
+                }
+            }
+        );
+
         webviewPanel.webview.html = await this.toHTML(document.uri);
     }
 
