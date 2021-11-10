@@ -14,3 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.0] - 2021-06-17
 ### Changed:
  * Replaced custom webview with newer `CustomEditor` API
+## [2.2.0] - 2021-11-10
+### Changed:
+ * Improved handling of missing binaries in the system
