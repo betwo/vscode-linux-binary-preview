@@ -103,10 +103,19 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
         let args = ['-L', '-b', '--mime-type', uri.fsPath.toString()];
 
         console.log(`${file_executable} ${args.join(' ')}`);
-        let output = await this.getCommandOutput(file_executable, args)
-        console.log(output);
+        try {
+            let output = await this.getCommandOutput(file_executable, args)
+            console.log(output);
+            return output[0];
 
-        return output[0];
+        } catch (exception) {
+            console.error(exception);
+            if (exception.signal === undefined) {
+                vscode.window.showErrorMessage(`Cannot run 'file' via command '${file_executable}'. Please install it or set the option 'vscode-linux-binary-preview.file_command'.`);
+            }
+            return undefined;
+        }
+
     }
 
     private async getFileOutput(uri: vscode.Uri): Promise<string | undefined> {
@@ -114,8 +123,19 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
         let file_executable = config['file_command'];
         let args = [uri.fsPath.toString(), '-L'];
 
-        let file = await this.getCommandOutput(file_executable, args);
-        return `<h2>${file}</h2>`;
+        try {
+            let file = await this.getCommandOutput(file_executable, args);
+            return `<h2>${file}</h2>`;
+
+        } catch (exception) {
+            console.error(exception);
+            if (exception.signal === undefined) {
+                const error_msg = `Cannot run 'file' via command '${file_executable}'. Please install it or set the option 'vscode-linux-binary-preview.file_command'.`;
+                return `<p><span style='color: red; font-weight: bold'>Error: ${error_msg}</span></p>`;
+            }
+            return undefined;
+        }
+
     }
 
     private async getLddOutput(uri: vscode.Uri): Promise<string | undefined> {
@@ -127,7 +147,16 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
         let ldd_executable = config['ldd_command'];
         let args = [uri.fsPath.toString()];
 
-        let ldd = await this.getCommandOutput(ldd_executable, args);
+        let ldd: String[] = [];
+        try {
+            ldd = await this.getCommandOutput(ldd_executable, args);
+        } catch (exception) {
+            console.error(exception);
+            if (exception.signal === undefined) {
+                const error_msg = `Cannot run 'ldd' via command '${ldd_executable}'. Please install it or set the option 'vscode-linux-binary-preview.ldd_command'.`;
+                return `<p><span style='color: red; font-weight: bold'>Error: ${error_msg}</span></p>`;
+            }
+        }
 
         for (let row of ldd) {
             let [symbol, library] = row.split(/\s*=>\s*/);
@@ -156,12 +185,17 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
         let nm_executable = config['nm_command'];
         let args = [uri.fsPath.toString()];
 
-        let nm: string[];
+        let nm: string[] = [];
         try {
             nm = await this.getCommandOutput(nm_executable, ["--demangle"].concat(args));
         } catch (exception) {
             console.error(exception);
-            return "";
+
+            if (exception.signal === undefined) {
+                const error_msg = `Cannot run 'nm' via command '${nm_executable}'. Please install it or set the option 'vscode-linux-binary-preview.ldd_command'.`;
+                return `<p><span style='color: red; font-weight: bold'>Error: ${error_msg}</span></p>`;
+            } else {
+            }
         }
 
         let content = "<h2>nm:</h2>";
@@ -279,10 +313,10 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
         return new Promise(
             (resolve, reject) => {
                 let child = child_process.execFile(command, args, options,
-                    (err, std_out, std_err) => {
+                    (err: child_process.ExecException, std_out, std_err) => {
                         if (err) {
                             console.log(`error: ${err}\n${std_err}`);
-                            reject();
+                            reject(err);
                             return;
                         }
 

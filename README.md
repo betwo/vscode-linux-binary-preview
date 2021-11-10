@@ -16,3 +16,9 @@ Displayed information is the output of the commands
  * `file` (File information)
  * `ldd` (Linked libraries, if available)
  * `nm` (Contained symbols)
+ which have to be installed in your system.
+ For Ubuntu, the relevant packages are:
+ 
+ ```sh
+apt-get install file libc-bin binutils
+ ```
