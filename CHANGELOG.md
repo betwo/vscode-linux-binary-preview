@@ -17,3 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.2.0] - 2021-11-10
 ### Changed:
  * Improved handling of missing binaries in the system
+## [2.3.0] - 2021-11-13
+### Added:
+ * Added support for compressed archives (.tar*, .zip, .rar, .7z)
+### Changed:
+ * Use MIME type to select which tools to run on a file
+ * Further consolidated handling of missing binaries in the system
