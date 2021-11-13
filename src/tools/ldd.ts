@@ -2,10 +2,11 @@ import * as vscode from 'vscode';
 import { Tool } from "../tool"
 import { getCommandOutput } from '../utils/command';
 
-export class Ldd implements Tool {
-    getName(): string {
-        return "ldd";
+export class Ldd extends Tool {
+    constructor() {
+        super("ldd");
     }
+
     async getOutput(uri: vscode.Uri): Promise<string> {
         let content: string;
         content = "<table>";
@@ -15,16 +16,7 @@ export class Ldd implements Tool {
         let ldd_executable = config['ldd_command'];
         let args = [uri.fsPath.toString()];
 
-        let ldd: String[] = [];
-        try {
-            ldd = await getCommandOutput(ldd_executable, args);
-        } catch (exception) {
-            console.error(exception);
-            if (exception.signal === undefined) {
-                const error_msg = `Cannot run 'ldd' via command '${ldd_executable}'. Please install it or set the option 'vscode-linux-binary-preview.ldd_command'.`;
-                return `<p><span style='color: red; font-weight: bold'>Error: ${error_msg}</span></p>`;
-            }
-        }
+        const ldd = await getCommandOutput(ldd_executable, args);
 
         for (let row of ldd) {
             let [symbol, library] = row.split(/\s*=>\s*/);

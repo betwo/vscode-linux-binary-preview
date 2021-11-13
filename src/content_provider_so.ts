@@ -23,7 +23,7 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
 
     constructor(
         private readonly context: vscode.ExtensionContext
-    ) {}
+    ) { }
 
     public onDidChangeCustomDocument: vscode.Event<vscode.CustomDocumentEditEvent<BinaryFile>> | vscode.Event<vscode.CustomDocumentContentChangeEvent<BinaryFile>>;
 
@@ -59,6 +59,10 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
 
     public async toHTML(uri: vscode.Uri): Promise<string | undefined> {
         const mime_type: MimeType = await getMimeType(uri);
+        if (!mime_type) {
+            return undefined;
+        }
+
         const tools = this.tools.getToolsForMimeType(mime_type);
 
         let content = "";
@@ -69,7 +73,7 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
         for (let tool of tools) {
             try {
                 content += `<h2>${tool.getName()}:</h2>`;
-                content += await tool.getOutput(uri);
+                content += await tool.getFormattedOutput(uri);
             } catch (err) {
                 const error_msg = `Cannot run '${tool.constructor.name}': ${err}`;
                 content += `<p><span style='color: red; font-weight: bold'>Error: ${error_msg}</span></p>`;

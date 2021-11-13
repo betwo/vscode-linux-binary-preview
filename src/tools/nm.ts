@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import { Tool } from "../tool"
 import { getCommandOutput } from '../utils/command';
 
-export class Nm implements Tool {
-    getName(): string {
-        return "nm";
+export class Nm extends Tool {
+    constructor() {
+        super("nm");
     }
 
     async getOutput(uri: vscode.Uri): Promise<string> {
@@ -12,18 +12,7 @@ export class Nm implements Tool {
         let nm_executable = config['nm_command'];
         let args = [uri.fsPath.toString()];
 
-        let nm: string[] = [];
-        try {
-            nm = await getCommandOutput(nm_executable, ["--demangle"].concat(args));
-        } catch (exception) {
-            console.error(exception);
-
-            if (exception.signal === undefined) {
-                const error_msg = `Cannot run 'nm' via command '${nm_executable}'. Please install it or set the option 'vscode-linux-binary-preview.ldd_command'.`;
-                return `<p><span style='color: red; font-weight: bold'>Error: ${error_msg}</span></p>`;
-            } else {
-            }
-        }
+        const nm = await getCommandOutput(nm_executable, ["--demangle"].concat(args));
 
         let content: string;
         content = "<table>";
