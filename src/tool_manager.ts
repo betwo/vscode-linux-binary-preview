@@ -2,6 +2,10 @@ import { Tool } from './tool';
 import { Nm } from './tools/nm';
 import { Ldd } from './tools/ldd';
 import { File } from './tools/file';
+import { Zip } from './tools/zip';
+import { Unrar } from './tools/unrar';
+import { Tar } from './tools/tar';
+import { SevenZip } from './tools/7z';
 
 type MimeType = string;
 
@@ -13,11 +17,22 @@ export class ToolManager {
         let tool_file = new File();
         let tool_ldd = new Ldd();
         let tool_nm = new Nm();
+        let tool_zip = new Zip();
+        let tool_tar = new Tar();
+        let tool_unrar = new Unrar();
+        let tool_7z = new SevenZip();
 
         this.registerDefaultTools([tool_file]);
 
         this.registerMimeType("application/x-sharedlib", [tool_ldd, tool_nm]);
         this.registerMimeType("application/x-archive", [tool_nm]);
+        this.registerMimeType("application/zip", [tool_zip]);
+        this.registerMimeType("application/x-tar", [tool_tar]);
+        this.registerMimeType("application/x-xz", [tool_tar]);
+        this.registerMimeType("application/gzip", [tool_tar]);
+        this.registerMimeType("application/x-rar", [tool_unrar]);
+        this.registerMimeType("application/x-7z-compressed", [tool_7z]);
+        
     }
 
     public registerDefaultTools(tools: Tool[]) {

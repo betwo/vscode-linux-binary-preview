@@ -7,18 +7,38 @@
 
 Open binary Linux files and display information about the symbols contained.
 
-Supported file types are:
+## Supported file types
+
  * Shared objects (.so)
  * Archives (.a)
  * Executable binary files
+ * Compressed Archives (.tar, .rar, .zip, .7z)
 
-Displayed information is the output of the commands
+Displayed information for shared objects / archives is the output of the commands
  * `file` (File information)
  * `ldd` (Linked libraries, if available)
  * `nm` (Contained symbols)
  which have to be installed in your system.
- For Ubuntu, the relevant packages are:
- 
- ```sh
-apt-get install file libc-bin binutils
- ```
+
+For compressed archives, the contained file names are displayed.
+
+## Tool System Dependencies
+
+| Tool      | Debian / Ubuntu Package |
+| --------- | ------------------------|
+| **file**  | file                    |
+| **nm**    | binutils                |
+| **ldd**   | libc-bin                |
+| **zip**   | zip                     |
+| **tar**   | tar                     |
+| **7z**    | p7zip-full              |
+| **unrar** | unrar                   |
+
+Install them with `apt-get install <pkg>` if you want to see the relavant output.
+
+All tools paths can be configured via `vscode-linux-binary-preview.<tool>_command`, e.g.
+```json
+{
+    "vscode-linux-binary-preview.nm_command": "/usr/local/bin/nm"
+}
+```

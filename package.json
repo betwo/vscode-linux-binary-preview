@@ -43,6 +43,26 @@
             "type": "string",
             "default": "nm",
             "description": "Path to the nm executable"
+          },
+          "vscode-linux-binary-preview.zip_command": {
+            "type": "string",
+            "default": "zip",
+            "description": "Path to the zip executable"
+          },
+          "vscode-linux-binary-preview.tar_command": {
+            "type": "string",
+            "default": "tar",
+            "description": "Path to the tar executable"
+          },
+          "vscode-linux-binary-preview.unrar_command": {
+            "type": "string",
+            "default": "unrar",
+            "description": "Path to the unrar executable"
+          },
+          "vscode-linux-binary-preview.7z_command": {
+            "type": "string",
+            "default": "7z",
+            "description": "Path to the 7z executable"
           }
         }
       }
@@ -87,6 +107,21 @@
           },
           {
             "filenamePattern": "*.out"
+          },
+          {
+            "filenamePattern": "*.tar"
+          },
+          {
+            "filenamePattern": "*.tar.*"
+          },
+          {
+            "filenamePattern": "*.zip"
+          },
+          {
+            "filenamePattern": "*.rar"
+          },
+          {
+            "filenamePattern": "*.7z"
           }
         ],
         "priority": "default"
