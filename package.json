@@ -21,7 +21,7 @@
     "multi-root ready"
   ],
   "activationEvents": [
-    "*"
+    "onCustomEditor:linuxBinaryPreview.preview"
   ],
   "main": "./dist/extension",
   "contributes": {
