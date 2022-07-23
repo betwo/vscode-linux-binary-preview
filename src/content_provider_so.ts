@@ -93,7 +93,7 @@ export class SharedObjectContentProvider implements vscode.CustomReadonlyEditorP
                 openResource = function (vscode, uri) {
                     vscode.postMessage({
                         command: 'showBinary',
-                        text: uri 
+                        text: uri
                     });
                 };
                 (function() {

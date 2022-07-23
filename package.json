@@ -100,6 +100,9 @@
             "filenamePattern": "*.so"
           },
           {
+            "filenamePattern": "*.so.*"
+          },
+          {
             "filenamePattern": "*.a"
           },
           {
